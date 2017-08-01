@@ -2,15 +2,31 @@ cmake_minimum_required(VERSION 3.4.1)
 
 enable_language(ASM)
 
-include_directories( include android )
+if( ANDROID )
+	set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0")
+	set(CMAKE_C_FLAGS_DEBUG "-g3 -O0")
+	set(CMAKE_CXX_FLAGS_RELEASE "-O2 -s -DNDEBUG")
+	set(CMAKE_C_FLAGS_RELEASE "-O2 -s -DNDEBUG")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
+	set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g3 -Og")
+	set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -s -DNDEBUG")
+	set(CMAKE_C_FLAGS_MINSIZEREL "-Os -s -DNDEBUG")
+
+	include_directories( include android )
+#else()
+	include_directories( include )
+endif()
+
 
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DONIG_EXTERN=extern" )
 
 if(ANDROID_ARM_NEON)
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__ARM_HAVE_NEON" )
+	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__ARM_HAVE_NEON" )
 endif()
 
-set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -DELF")
+if( ANDROID )
+	set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -DELF")
+endif()
 
 set( JPEG_TURBO_SRC 
 	jcapimin.c
